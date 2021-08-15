@@ -6,7 +6,7 @@ namespace APIAutomation
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("My Web API Test program");
         }
     }
 }
