@@ -14,6 +14,8 @@ using System.Text;
 
 using System.Net.Http.Headers;
 
+using System.IO;
+
 namespace APIAutomation
 {
     class Program
@@ -26,16 +28,22 @@ namespace APIAutomation
 
             /*
             //(1)First Example
+            //C# HttpClient HEAD request
+
             var content = await client.GetStringAsync(url);
             Console.WriteLine(content);
 
             //(2)Second Example
+            //C# HttpClient HEAD request
+
             var result = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
             Console.WriteLine(result);
 
            
             
            //(3.)Third Example
+           //C# HttpClient multiple async requests
+
            var urls = new string[] { "http://webcode.me", "http://example.com",
             "http://httpbin.org", "https://ifconfig.me", "http://termbin.com",
             "https://github.com"
@@ -73,38 +81,42 @@ namespace APIAutomation
             }
         
         
-        //(4) Fourth Example
+            //(4.) Fourth Example
+            //C# HttpClient POST request
 
-        var person = new {
-            Name = "John Doe", 
-            Occupation = "gardener"
-         };
-        // var clientdata = new{
-        //     clientName = "xyz",
-        //     clientEmail = "xyz@example.com"
-        // };
 
-        var json = JsonConvert.SerializeObject(person);
-        //var json = JsonConvert.SerializeObject(clientdata);
-        var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var person = new {
+                Name = "John Doe", 
+                Occupation = "gardener"
+            };
+            // var clientdata = new{
+            //     clientName = "xyz",
+            //     clientEmail = "xyz@example.com"
+            // };
 
-        var url = "https://httpbin.org/post";
-        //var url = "https://simple-books-api.glitch.me/api-clients";
-        using var client = new HttpClient();
+            var json = JsonConvert.SerializeObject(person);
+            //var json = JsonConvert.SerializeObject(clientdata);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-        var response = await client.PostAsync(url, data);
+            var url = "https://httpbin.org/post";
+            //var url = "https://simple-books-api.glitch.me/api-clients";
+            using var client = new HttpClient();
+
+            var response = await client.PostAsync(url, data);
         
-        string result = response.Content.ReadAsStringAsync().Result;
+            string result = response.Content.ReadAsStringAsync().Result;
          
-        Console.WriteLine(result);
+            Console.WriteLine(result);
         
 
-        //record Person(string Name, string Occupation);        
+            //record Person(string Name, string Occupation);        
 
-        */
+        
 
 
-            //(5)Fifth Example
+
+            //(5.)Fifth Example
+            //C# HttpClient JSON request
 
             using var client = new HttpClient();
 
@@ -119,15 +131,50 @@ namespace APIAutomation
             var resp = await response.Content.ReadAsStringAsync();
 
 
-            //var data = new StringContent(resp, Encoding.UTF8, "application/json");
-           
             List<Contributors> contributors = JsonConvert.DeserializeObject<List<Contributors>>(resp);
 
             foreach (var item in contributors)
             {
                 Console.WriteLine($"Login is {item.login} and contribution is {item.contributions}");
             }
-           
+
+            
+            
+            
+            //(6.)Sixth Example
+            //C# HttpClient download image
+
+            using var httpClient = new HttpClient();
+            var url = "http://webcode.me/favicon.ico";
+            byte[] imageBytes = await httpClient.GetByteArrayAsync(url);
+
+            string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+
+            string localFilename = "favicon.ico";
+            string localPath = Path.Combine(documentsPath, localFilename);
+
+            Console.WriteLine(localPath);
+            File.WriteAllBytes(localPath, imageBytes);
+
+            */
+
+            //(7.)Seventh Example
+            //C# HttpClient Basic authentication
+
+            var userName = "user7";
+            var passwd = "passwd";
+            var url = "https://httpbin.org/basic-auth/user7/passwd";
+
+            using var client = new HttpClient();
+
+            var authToken = Encoding.ASCII.GetBytes($"{userName}:{passwd}");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",Convert.ToBase64String(authToken));
+
+            var result = await client.GetAsync(url);
+
+            var content = await result.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
+
         }
     }
 
